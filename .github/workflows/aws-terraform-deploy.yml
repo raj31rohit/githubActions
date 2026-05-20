@@ -30,9 +30,11 @@ jobs:
           aws-region: us-east-1
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.7
+          terraform_version: '1.6.7'
+          cli_config_credentials_hostname: app.terraform.io
+          terraform_wrapper: true
 
       - name: Terraform init
         working-directory: terraform
