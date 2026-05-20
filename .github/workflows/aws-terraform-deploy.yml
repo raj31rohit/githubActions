@@ -13,7 +13,7 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  AWS_S3_BUCKET_NAME: my-terraform-deployment-bucket
+  AWS_S3_BUCKET_NAME: my-terraform-deployment-bucket-2273173343222
 
 jobs:
   terraform:
