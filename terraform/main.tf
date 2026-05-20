@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "deployment_bucket" {
     }
   }
 
-  public_access_block_configuration {
+  public_access_block {
     block_public_acls       = true
     block_public_policy     = true
     ignore_public_acls      = true
