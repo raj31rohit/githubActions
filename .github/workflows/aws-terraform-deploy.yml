@@ -1,0 +1,52 @@
+name: AWS Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+
+env:
+  AWS_REGION: us-east-1
+  AWS_S3_BUCKET_NAME: my-terraform-deployment-bucket
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials using GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::054276329279:role/github-actions-oidc-role
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.7
+
+      - name: Terraform init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Terraform plan
+        working-directory: terraform
+        run: terraform plan -var="region=${{ env.AWS_REGION }}" -var="bucket_name=${{ env.AWS_S3_BUCKET_NAME }}"
+
+      - name: Terraform apply
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+        working-directory: terraform
+        run: terraform apply -auto-approve -var="region=${{ env.AWS_REGION }}" -var="bucket_name=${{ env.AWS_S3_BUCKET_NAME }}"
